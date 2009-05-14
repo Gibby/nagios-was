@@ -1,0 +1,7 @@
+#!/bin/sh
+
+PLUGIN_HOME=/opt/plugins/custom
+JAVA_HOME=/usr/lib/j2sdk1.6-ibm
+WAS_HOME=/mnt/toswasq/was/was61
+
+$JAVA_HOME/bin/java -cp $PLUGIN_HOME/check_was-1.0.0-SNAPSHOT.jar:$WAS_HOME/runtimes/com.ibm.ws.admin.client_6.1.0.jar:$WAS_HOME/runtimes/com.ibm.ws.webservices.thinclient_6.1.0.jar com.googlecode.nagioswas.Run $* 2> /dev/null
