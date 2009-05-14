@@ -31,23 +31,27 @@ public class ThreadPoolCheck extends Check {
         boolean isCritical = false;
         boolean isWarning = false;
         StringBuffer output = new StringBuffer();
+        StringBuffer perfOutput = new StringBuffer();
+
         for(ThreadPool pool : pools) {
             long size = pool.getThreadPoolSize(perf);
             long max = pool.getThreadPoolMax(perf);
             
-            long ratio = calcRatio(size, max);
+            double ratio = calcRatio(size, max);
             
             if(isCritical(ratio, critical)) {
                 isCritical = true;
             }
             if(isWarning(ratio, warning)) {
-                isCritical = true;
+                isWarning = true;
             }
             
             if(output.length() > 0) {
                 output.append(", ");
             }
             output.append(formatBoundedMessage(ratio, size, max, pool.getName()));
+            perfOutput.append(formatPerfData(ratio, "%", critical, warning, escapePerfLabel(pool.getName())));
+
         }
         
         ResultLevel level;
@@ -60,6 +64,7 @@ public class ThreadPoolCheck extends Check {
             level = ResultLevel.OK;
         }
         
-        return new CheckResult(level, "thread pool size: " + output.toString());
+        return new CheckResult(level, "thread pool size: " + output.toString()
+                + "|" + perfOutput.toString());
     }
 }

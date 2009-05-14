@@ -31,23 +31,28 @@ public class JDBCConnectionPoolCheck extends Check {
         boolean isCritical = false;
         boolean isWarning = false;
         StringBuffer output = new StringBuffer();
+        StringBuffer perfOutput = new StringBuffer();
         for(JDBCConnectionPool pool : pools) {
             long size = pool.getPoolSize(perf);
             long max = pool.getPoolMax(perf);
             
-            long ratio = calcRatio(size, max);
-            
-            if(isCritical(ratio, critical)) {
-                isCritical = true;
+            if(max > 0) {
+                // exclude non-used pools
+                double ratio = calcRatio(size, max);
+                
+                if(isCritical(ratio, critical)) {
+                    isCritical = true;
+                }
+                if(isWarning(ratio, warning)) {
+                    isWarning = true;
+                }
+                
+                if(output.length() > 0) {
+                    output.append(", ");
+                }
+                output.append(formatBoundedMessage(ratio, size, max, pool.getName()));
+                perfOutput.append(formatPerfData(ratio, "%", critical, warning, escapePerfLabel(pool.getName())));
             }
-            if(isWarning(ratio, warning)) {
-                isCritical = true;
-            }
-            
-            if(output.length() > 0) {
-                output.append(", ");
-            }
-            output.append(formatBoundedMessage(ratio, size, max, pool.getName()));
         }
         
         ResultLevel level;
@@ -60,6 +65,10 @@ public class JDBCConnectionPoolCheck extends Check {
             level = ResultLevel.OK;
         }
         
-        return new CheckResult(level, "connection pool size: " + output.toString());
+        return new CheckResult(level, "connection pool size: " 
+                + output.toString()
+                + "|" + perfOutput.toString());
     }
+    
+
 }

@@ -18,9 +18,9 @@ public class LiveSessionCheck extends Check {
     }
 
     public CheckResult check(int critical, int warning, String name) throws ConnectorException, JMException {
-        List<SessionManager> managers;
         
-        if(name == null) {
+        List<SessionManager> managers;
+        if(name == null || name.contains("*")) {
             // check all thread pools
             managers = SessionManager.create(client, perf);
         } else {
@@ -31,20 +31,27 @@ public class LiveSessionCheck extends Check {
         boolean isCritical = false;
         boolean isWarning = false;
         StringBuffer output = new StringBuffer();
+        StringBuffer perfOutput = new StringBuffer();
+
         for(SessionManager manager : managers) {
-            long size = manager.getLiveCount(perf);
+            if(matchName(name, manager.getName())) {
             
-            if(isCritical(size, critical)) {
-                isCritical = true;
+                long size = manager.getLiveCount(perf);
+                
+                if(isCritical(size, critical)) {
+                    isCritical = true;
+                }
+                if(isWarning(size, warning)) {
+                    isWarning = true;
+                }
+                
+                if(output.length() > 0) {
+                    output.append(", ");
+                }
+                output.append(formatRangedMessage(size, manager.getName()));
+                perfOutput.append(formatPerfData(size, "", critical, warning, 
+                        escapePerfLabel(manager.getName())));
             }
-            if(isWarning(size, warning)) {
-                isCritical = true;
-            }
-            
-            if(output.length() > 0) {
-                output.append(", ");
-            }
-            output.append(formatRangedMessage(size, manager.getName()));
         }
         
         ResultLevel level;
@@ -57,6 +64,18 @@ public class LiveSessionCheck extends Check {
             level = ResultLevel.OK;
         }
         
-        return new CheckResult(level, "live sessions: " + output.toString());
+        return new CheckResult(level, "live sessions: " + output.toString()
+                + "|" + perfOutput.toString());
+    }
+    
+    private boolean matchName(String pattern, String name) {
+        if(pattern == null) {
+            // no pattern provided, match all
+            return true;
+        } else if(pattern.endsWith("*")) {
+            return name.startsWith(pattern.substring(0, pattern.length() - 1));
+        } else {
+            return pattern.equals(name);
+        }
     }
 }

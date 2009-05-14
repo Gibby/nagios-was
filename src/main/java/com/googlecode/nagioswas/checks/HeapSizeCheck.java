@@ -19,11 +19,13 @@ public class HeapSizeCheck extends Check {
         long heapsize = jvm.getHeapSize();
         long heapsizeMax = jvm.getHeapSizeMax();
         
-        long ratio = calcRatio(heapsize, heapsizeMax);
+        double ratio = calcRatio(heapsize, heapsizeMax);
         
         ResultLevel level = checkResult(ratio, critical, warning);
         
-        return new CheckResult(level, "heapsize: " + formatBoundedMessage(ratio, heapsize, heapsizeMax, null) );
+        return new CheckResult(level, "heapsize: " + 
+                formatBoundedMessage(ratio, heapsize, heapsizeMax, null) +
+                "|" + formatPerfData(ratio, "%", critical, warning, "heapsize") );
     }
     
 

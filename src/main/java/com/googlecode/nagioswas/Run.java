@@ -8,6 +8,7 @@ import com.googlecode.nagioswas.checks.HeapSizeCheck;
 import com.googlecode.nagioswas.checks.JDBCConnectionPoolCheck;
 import com.googlecode.nagioswas.checks.LiveSessionCheck;
 import com.googlecode.nagioswas.checks.ThreadPoolCheck;
+import com.googlecode.nagioswas.checks.CheckResult.ResultLevel;
 import com.googlecode.nagioswas.services.Perf;
 import com.ibm.websphere.management.AdminClient;
 
@@ -19,7 +20,9 @@ public class Run {
             
             String profile = arguments.get("-p");
             if(profile == null) {
-                throw new RuntimeException("Profile (-p) must be specified");
+                throw new RuntimeException("Server (-p) must be specified");
+            } else if(Config.getString(profile, "hostname") == null) {
+                throw new RuntimeException("Server (-p) unknown, please check check_was.servers");
             }
             String service = arguments.get("-s");
             if(service == null) {
@@ -46,14 +49,21 @@ public class Run {
             if(check != null) {
                 CheckResult result = check.check(critical, warning, name);
                 System.out.println(result.getLevel() + " - " + result.getMessage());
+                
+                if(result.getLevel() == ResultLevel.CRITICAL) {
+                    System.exit(2);
+                } else if(result.getLevel() == ResultLevel.WARNING) {
+                    System.exit(1);
+                } else if(result.getLevel() == ResultLevel.OK) {
+                    System.exit(0);
+                }
             } else {
                 System.out.println("Unknown service");
-                System.exit(-3);
+                System.exit(3);
             }
         } catch(Exception e) {
-            e.printStackTrace();
-            System.out.println("CRITICAL - " + e.getMessage());
-            System.exit(-2);
+            System.out.println("ERROR - " + e.getMessage());
+            System.exit(3);
         }
     }
 

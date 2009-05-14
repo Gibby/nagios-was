@@ -20,19 +20,19 @@ public abstract class Check {
     
     public abstract CheckResult check(int critical, int warning, String name) throws ConnectorException, JMException;
     
-    protected long calcRatio(long value, long max) {
-        return Math.round((double)value/max * 100);
+    protected double calcRatio(long value, long max) {
+        return ((double)value)/max * 100;
     }
 
-    protected boolean isCritical(long ratio, long critical) {
+    protected boolean isCritical(double ratio, long critical) {
         return ratio >= critical;
     }
 
-    protected boolean isWarning(long ratio, long warning) {
+    protected boolean isWarning(double ratio, long warning) {
         return ratio >= warning;
     }
     
-    protected ResultLevel checkResult(long ratio, int critical, int warning)  {
+    protected ResultLevel checkResult(double ratio, int critical, int warning)  {
         if(isCritical(ratio, critical)) {
             return ResultLevel.CRITICAL;
         } else if(isWarning(ratio, warning)) {
@@ -50,11 +50,33 @@ public abstract class Check {
         }
     }
     
-    protected String formatBoundedMessage(long ratio, long value, long max, String message) {
-        if(message != null) {        
-            return message + " " + value + "/" + max + " (" + ratio + "%)";
-        } else {
-            return value + "/" + max + " (" + ratio + "%)";
-        }
+    private String formatDouble(double d) {
+        return (Math.round(d * 100d) / 100d) + "";
     }
+    
+    protected String formatBoundedMessage(double ratio, long value, long max, String message) {
+        StringBuffer sb = new StringBuffer();
+        if(message != null) {
+            sb.append(message).append(" ");
+        }
+        sb.append(value).append("/").append(max).append(" (").append(formatDouble(ratio)).append("%)");
+        
+        return sb.toString();
+    }
+    
+    protected String formatPerfData(double ratio, String uom, long critical, long warning, String perfLabel) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append(perfLabel).append("=");
+        sb.append(formatDouble(ratio)).append(uom).append(";");
+        sb.append(warning).append(";").append(critical);
+        sb.append("; ");
+        
+        return sb.toString();
+    }
+    
+    protected String escapePerfLabel(String p) {
+        return p.replaceAll("[\\s/\\=\\']+", "").replaceAll("[\\.]+", "_").toLowerCase();
+    }
+    
 }
