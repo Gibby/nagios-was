@@ -11,6 +11,7 @@ import com.ibm.websphere.management.exception.ConnectorException;
 import com.ibm.websphere.pmi.stat.WSBoundedRangeStatistic;
 import com.ibm.websphere.pmi.stat.WSRangeStatistic;
 import com.ibm.websphere.pmi.stat.WSStats;
+import com.ibm.websphere.pmi.stat.WSTimeStatistic;
 
 public abstract class WASPerformanceService extends WASService {
 
@@ -28,6 +29,12 @@ public abstract class WASPerformanceService extends WASService {
         return (WSRangeStatistic) wsStats.getStatistic (stat);
     }
 
+    protected WSTimeStatistic getTimedStats(int stat) throws JMException, ConnectorException {
+        WSStats wsStats = lazyLoadStats();
+        
+        return (WSTimeStatistic) wsStats.getStatistic (stat);
+    }
+    
     protected WSBoundedRangeStatistic getBoundedStats(int stat) throws JMException, ConnectorException {
         WSStats wsStats = lazyLoadStats();
         
