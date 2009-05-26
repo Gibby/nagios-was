@@ -62,6 +62,7 @@ public class Run {
                 System.exit(3);
             }
         } catch(Exception e) {
+            e.printStackTrace();
             System.out.println("ERROR - " + e.getMessage());
             System.exit(3);
         }
