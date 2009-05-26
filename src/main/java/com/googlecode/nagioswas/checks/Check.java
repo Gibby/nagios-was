@@ -76,7 +76,7 @@ public abstract class Check {
     }
     
     protected String escapePerfLabel(String p) {
-        return p.replaceAll("[\\s/\\=\\']+", "").replaceAll("[\\.]+", "_").toLowerCase();
+        return p.replaceAll("[\\s/\\=\\'\\)]+", "").replaceAll("[\\.\\(]+", "_").toLowerCase();
     }
     
 }
