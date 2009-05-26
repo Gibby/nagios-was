@@ -33,10 +33,13 @@ public class LiveSessionCheck extends Check {
         StringBuffer output = new StringBuffer();
         StringBuffer perfOutput = new StringBuffer();
 
+        long totalSize = 0;
+        
         for(SessionManager manager : managers) {
             if(matchName(name, manager.getName())) {
             
                 long size = manager.getLiveCount(perf);
+                totalSize += size;
                 
                 if(isCritical(size, critical)) {
                     isCritical = true;
@@ -53,6 +56,17 @@ public class LiveSessionCheck extends Check {
                         escapePerfLabel(manager.getName())));
             }
         }
+
+        if(isCritical(totalSize, critical)) {
+            isCritical = true;
+        }
+        if(isWarning(totalSize, warning)) {
+            isWarning = true;
+        }
+        
+        output.insert(0, formatRangedMessage(totalSize, "total") + ", ");
+        perfOutput.insert(0, formatPerfData(totalSize, "", critical, warning, 
+                escapePerfLabel("total")));
         
         ResultLevel level;
         
