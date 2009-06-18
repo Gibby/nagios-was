@@ -61,6 +61,6 @@
 	</build>
 
 	<properties>
-		<was.home>/mnt/toswasq/was/was61</was.home>
+		<was.home>/opt/was</was.home>
 	</properties>
 </project>
