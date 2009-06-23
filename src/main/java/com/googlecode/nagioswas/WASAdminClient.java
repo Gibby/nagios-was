@@ -2,6 +2,11 @@ package com.googlecode.nagioswas;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.util.Properties;
 
 import com.ibm.websphere.management.AdminClient;
@@ -29,25 +34,22 @@ public class WASAdminClient {
         File sslTrustStore = new File(Config.getString(profile, "truststore"));
         File sslKeyStore = new File(Config.getString(profile, "keystore"));
 
+        String sslTrustStorePassword = Config.getString(profile, "truststorepassword");
+        String sslKeyStorePassword = Config.getString(profile, "keystorepassword");
+        
         if(Config.getBoolean(profile, "securityenabled")) {
             props.setProperty(AdminClient.CONNECTOR_SECURITY_ENABLED, "true");
             props.setProperty(AdminClient.CONNECTOR_AUTO_ACCEPT_SIGNER, "true");
     
-            if (!sslTrustStore.exists()) {
-                throw new RuntimeException("Truststore does not exists: "
-                        + sslTrustStore);
-            }
-            if (!sslKeyStore.exists()) {
-                throw new RuntimeException("Keystore does not exists: "
-                        + sslKeyStore);
-            }
+            checkStore(sslTrustStore, sslTrustStorePassword, "Trust");
+            checkStore(sslKeyStore, sslKeyStorePassword, "Key");
     
             props.setProperty("javax.net.ssl.trustStore", sslTrustStore
                     .getAbsolutePath());
             props.setProperty("javax.net.ssl.keyStore", sslKeyStore
                     .getAbsolutePath());
-            props.setProperty("javax.net.ssl.trustStorePassword", Config.getString(profile, "truststorepassword"));
-            props.setProperty("javax.net.ssl.keyStorePassword", Config.getString(profile, "keystorepassword"));
+            props.setProperty("javax.net.ssl.trustStorePassword", sslTrustStorePassword);
+            props.setProperty("javax.net.ssl.keyStorePassword", sslKeyStorePassword);
     
             props.setProperty(AdminClient.USERNAME, Config.getString(profile, "username"));
             props.setProperty(AdminClient.PASSWORD, Config.getString(profile, "password"));
@@ -58,5 +60,31 @@ public class WASAdminClient {
         adminClient = AdminClientFactory.createAdminClient(props);
 
         return adminClient;
+    }
+    
+    private void checkStore(File store, String password, String type) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(store);
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(fis, password.toCharArray());
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(type + "store could not be opened, check configuration: "
+                    + store.getAbsolutePath(), e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(type + "store does not exists: "
+                    + store.getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(type + "store could not be opened, check configuration: "
+                    + store.getAbsolutePath(), e);
+        } finally {
+            if(fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException ignored) {
+                    ;
+                }
+            }
+        }
     }
 }
