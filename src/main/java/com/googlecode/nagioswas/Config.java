@@ -1,4 +1,5 @@
 package com.googlecode.nagioswas;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -12,10 +13,18 @@ public class Config {
     private static Properties lazyLoad() {
         if(cachedConfig == null) {
             cachedConfig  = new Properties();
+            File file = null;
             try {
-                cachedConfig.load(new FileInputStream(CONFIG_FILE_NAME));
+                String pluginHome = System.getProperty("plugin.home");
+                if(pluginHome == null) {
+                    file = new File(CONFIG_FILE_NAME);
+                } else {
+                    file = new File(pluginHome, CONFIG_FILE_NAME);
+                }
+                
+                cachedConfig.load(new FileInputStream(file));
             } catch (IOException e) {
-                throw new RuntimeException("Failed to load " + CONFIG_FILE_NAME, e);
+                throw new RuntimeException("Failed to load config file from " + file.getAbsolutePath(), e);
             }
         }
         
