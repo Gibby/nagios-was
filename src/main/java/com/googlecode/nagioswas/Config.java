@@ -6,15 +6,16 @@ import java.util.Properties;
 
 public class Config {
 
+    private static final String CONFIG_FILE_NAME = "check_was.servers";
     private static Properties cachedConfig;
     
     private static Properties lazyLoad() {
         if(cachedConfig == null) {
             cachedConfig  = new Properties();
             try {
-                cachedConfig.load(new FileInputStream("check_was.servers"));
+                cachedConfig.load(new FileInputStream(CONFIG_FILE_NAME));
             } catch (IOException e) {
-                throw new RuntimeException("Failed to load profile.properties", e);
+                throw new RuntimeException("Failed to load " + CONFIG_FILE_NAME, e);
             }
         }
         
