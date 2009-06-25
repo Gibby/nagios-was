@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.Security;
 import java.util.Properties;
 
 import com.ibm.websphere.management.AdminClient;
@@ -27,8 +28,18 @@ public class WASAdminClient {
         props.setProperty(AdminClient.CACHE_DISABLED, "false");
 
         if (connector_security_enabled) {
-            adminClient = AdminClientFactory.createAdminClient(props);
-            return adminClient;
+            try {
+                adminClient = AdminClientFactory.createAdminClient(props);
+                return adminClient;
+            } catch(ConnectorException e) {
+                System.err.println("Could not connect to a SSL SOAP port, trying to set socket factories");
+                // huge hack! Try setting the SSL provider
+                Security.setProperty("ssl.SocketFactory.provider", "com.ibm.jsse2.SSLSocketFactoryImpl");
+                Security.setProperty("ssl.ServerSocketFactory.provider", "com.ibm.jsse2.SSLServerSocketFactoryImpl");
+                
+                adminClient = AdminClientFactory.createAdminClient(props);
+                return adminClient;                
+            }
         }
 
         File sslTrustStore = new File(Config.getString(profile, "truststore"));
