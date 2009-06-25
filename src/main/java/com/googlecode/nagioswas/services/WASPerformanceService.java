@@ -48,8 +48,13 @@ public abstract class WASPerformanceService extends WASService {
             String[] signature = new String[] { "javax.management.ObjectName",
                     "java.lang.Boolean" };
             Object[] params = new Object[] { mBean, Boolean.FALSE };
+
             wsStats = (WSStats) adminClient.invoke(perf.getMBean(),
                     "getStatsObject", params, signature);
+            
+            if(wsStats == null) {
+                throw new RuntimeException("Failed to get stats object on " + mBean.getCanonicalName() + ".");
+            }
         }
         return wsStats;
     }
