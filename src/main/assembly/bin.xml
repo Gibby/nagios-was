@@ -1,0 +1,23 @@
+<assembly>
+	<id>bin</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<dependencySets>
+		<dependencySet>
+			<includes>
+				<include>com.googlecode.nagioswas:check_was</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
+
+	<files>
+		<file>
+			<source>target/check_was</source>
+			<fileMode>0744</fileMode>
+		</file>
+		<file>
+			<source>check_was.servers.example</source>
+		</file>
+	</files>
+</assembly>

@@ -4,25 +4,53 @@
 	<groupId>com.googlecode.nagioswas</groupId>
 	<artifactId>check_was</artifactId>
 	<name>WAS plugin for Nagios</name>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.ibm.ws.admin</groupId>
 			<artifactId>client</artifactId>
 			<version>6.1.0</version>
 			<scope>system</scope>
-			<systemPath>${was.home}/runtimes/com.ibm.ws.admin.client_6.1.0.jar</systemPath>
+			<systemPath>${was.home}/runtimes/com.ibm.ws.admin.client_6.1.0.jar
+			</systemPath>
 		</dependency>
-        <dependency>
-            <groupId>com.ibm.ws.webservices</groupId>
-            <artifactId>thinclient</artifactId>
-            <version>6.1.0</version>
-            <scope>system</scope>
-            <systemPath>${was.home}/runtimes/com.ibm.ws.webservices.thinclient_6.1.0.jar</systemPath>
-        </dependency>
+		<dependency>
+			<groupId>com.ibm.ws.webservices</groupId>
+			<artifactId>thinclient</artifactId>
+			<version>6.1.0</version>
+			<scope>system</scope>
+			<systemPath>${was.home}/runtimes/com.ibm.ws.webservices.thinclient_6.1.0.jar
+			</systemPath>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<tasks>
+							    <copy file="check_was" todir="target" />
+                                <replace file="target/check_was" token="VERSION" value="${pom.version}" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.4.3</version>
@@ -52,7 +80,7 @@
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
-						  <mainClass>com.googlecode.nagioswas.Run</mainClass>
+							<mainClass>com.googlecode.nagioswas.Run</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
