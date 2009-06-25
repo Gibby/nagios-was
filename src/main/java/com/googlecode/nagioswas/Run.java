@@ -28,6 +28,13 @@ public class Run {
             if(service == null) {
                 throw new RuntimeException("Service (-s) must be specified");
             }
+            if(!arguments.containsKey("-w")) {
+                throw new RuntimeException("Warning level (-w) must be specified");
+            }
+            if(!arguments.containsKey("-c")) {
+                throw new RuntimeException("Critical level (-c) must be specified");
+            }
+            
             int warning = Integer.parseInt(arguments.get("-w"));
             int critical = Integer.parseInt(arguments.get("-c"));
             
