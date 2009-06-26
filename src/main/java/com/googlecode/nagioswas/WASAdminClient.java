@@ -42,16 +42,17 @@ public class WASAdminClient {
             }
         }
 
-        File sslTrustStore = new File(Config.getString(profile, "truststore"));
-        File sslKeyStore = new File(Config.getString(profile, "keystore"));
-
-        String sslTrustStorePassword = Config.getString(profile, "truststorepassword");
-        String sslKeyStorePassword = Config.getString(profile, "keystorepassword");
         
         if(Config.getBoolean(profile, "securityenabled")) {
             props.setProperty(AdminClient.CONNECTOR_SECURITY_ENABLED, "true");
             props.setProperty(AdminClient.CONNECTOR_AUTO_ACCEPT_SIGNER, "true");
     
+            File sslTrustStore = new File(Config.getString(profile, "truststore"));
+            File sslKeyStore = new File(Config.getString(profile, "keystore"));
+            
+            String sslTrustStorePassword = Config.getString(profile, "truststorepassword");
+            String sslKeyStorePassword = Config.getString(profile, "keystorepassword");
+            
             checkStore(sslTrustStore, sslTrustStorePassword, "Trust");
             checkStore(sslKeyStore, sslKeyStorePassword, "Key");
     
