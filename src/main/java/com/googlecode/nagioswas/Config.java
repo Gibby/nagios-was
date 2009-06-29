@@ -36,7 +36,19 @@ public class Config {
         
         return config.getProperty(profile + "." + name);
     }
-    
+
+    public static String getStringNotNull(String profile, String name) {
+        Properties config = lazyLoad();
+        
+        String fullName = profile + "." + name;
+        String value = config.getProperty(fullName);
+        
+        if(value != null) {
+            return value;
+        } else {
+            throw new RuntimeException(fullName + " must be provided, check configuration");
+        }
+    }
     
     public static int getInt(String profile, String name) {
         return Integer.parseInt(getString(profile, name));

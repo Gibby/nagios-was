@@ -23,18 +23,18 @@ public class WASAdminClient {
         props.setProperty(AdminClient.CONNECTOR_TYPE,
                 AdminClient.CONNECTOR_TYPE_SOAP);
         props.setProperty(AdminClient.CONNECTOR_HOST, Config.getString(profile, "hostname"));
-        props.setProperty(AdminClient.CONNECTOR_PORT, Config.getString(profile, "port"));
+        props.setProperty(AdminClient.CONNECTOR_PORT, Config.getStringNotNull(profile, "port"));
         props.setProperty(AdminClient.CACHE_DISABLED, "false");
 
         if(Config.getBoolean(profile, "securityenabled")) {
             props.setProperty(AdminClient.CONNECTOR_SECURITY_ENABLED, "true");
             props.setProperty(AdminClient.CONNECTOR_AUTO_ACCEPT_SIGNER, "true");
     
-            File sslTrustStore = new File(Config.getString(profile, "truststore"));
-            File sslKeyStore = new File(Config.getString(profile, "keystore"));
+            File sslTrustStore = new File(Config.getStringNotNull(profile, "truststore"));
+            File sslKeyStore = new File(Config.getStringNotNull(profile, "keystore"));
             
-            String sslTrustStorePassword = Config.getString(profile, "truststorepassword");
-            String sslKeyStorePassword = Config.getString(profile, "keystorepassword");
+            String sslTrustStorePassword = Config.getStringNotNull(profile, "truststorepassword");
+            String sslKeyStorePassword = Config.getStringNotNull(profile, "keystorepassword");
 
             String sslTrustStoreType = getStoreType(profile, "trust", sslTrustStore);
             String sslKeyStoreType = getStoreType(profile, "key", sslKeyStore);
@@ -53,8 +53,8 @@ public class WASAdminClient {
             props.setProperty("javax.net.ssl.keyStoreType", sslKeyStoreType);
 
             
-            props.setProperty(AdminClient.USERNAME, Config.getString(profile, "username"));
-            props.setProperty(AdminClient.PASSWORD, Config.getString(profile, "password"));
+            props.setProperty(AdminClient.USERNAME, Config.getStringNotNull(profile, "username"));
+            props.setProperty(AdminClient.PASSWORD, Config.getStringNotNull(profile, "password"));
         } else {
             props.setProperty(AdminClient.CONNECTOR_SECURITY_ENABLED, "false");
         }
