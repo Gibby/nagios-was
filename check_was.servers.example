@@ -1,9 +1,28 @@
+# Using the new PKCS12 keystores
 example.hostname=127.0.0.1
 example.port=8880
 example.username=admin
 example.password=secret
 example.securityenabled=true
-example.truststore=/opt/was/profiles/example/etc/DummyClientTrustFile.jks
-example.keystore=/opt/was/profiles/example/etc/DummyClientKeyFile.jks
+example.truststore=/opt/was/profiles/example/etc/trust.p12
+example.keystore=/opt/was/profiles/example/etc/key.p12
 example.truststorepassword=secret
 example.keystorepassword=secret
+
+# Using the old JKS type keystores
+example2.hostname=127.0.0.1
+example2.port=8880
+example2.username=admin
+example2.password=secret
+example2.securityenabled=true
+example2.truststore=/opt/was/profiles/example/etc/DummyClientTrustFile.jks
+example2.keystore=/opt/was/profiles/example/etc/DummyClientKeyFile.jks
+example2.truststorepassword=secret
+example2.keystorepassword=secret
+
+# Running without security enabled
+example3.hostname=127.0.0.1
+example3.port=8880
+example3.username=admin
+example3.password=secret
+example3.securityenabled=false
