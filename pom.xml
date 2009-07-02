@@ -4,7 +4,7 @@
 	<groupId>com.googlecode.nagioswas</groupId>
 	<artifactId>check_was</artifactId>
 	<name>WAS plugin for Nagios</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.ibm.ws.admin</groupId>
