@@ -32,7 +32,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<tasks>
-							    <copy file="check_was" todir="target" />
+							    <copy file="check_was" todir="target" overwrite="true" />
                                 <replace file="target/check_was" token="VERSION" value="${pom.version}" />
 							</tasks>
 						</configuration>
