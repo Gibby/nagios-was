@@ -26,4 +26,9 @@ public class JavaVirtualMachine extends WASPerformanceService {
     public long getHeapSizeMax() throws JMException, ConnectorException {
         return getBoundedStats(WSJVMStats.HeapSize).getUpperBound(); 
     }
+
+    public long getUsedMemory() throws JMException, ConnectorException {
+        return getCountStats(WSJVMStats.UsedMemory).getCount(); 
+    }
+    
 }

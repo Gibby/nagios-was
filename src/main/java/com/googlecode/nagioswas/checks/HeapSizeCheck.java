@@ -16,7 +16,7 @@ public class HeapSizeCheck extends Check {
 
     public CheckResult check(int critical, int warning, String name) throws ConnectorException, JMException {
         JavaVirtualMachine jvm = JavaVirtualMachine.create(client, perf);
-        long heapsize = jvm.getHeapSize();
+        long heapsize = jvm.getUsedMemory();
         long heapsizeMax = jvm.getHeapSizeMax();
         
         double ratio = calcRatio(heapsize, heapsizeMax);

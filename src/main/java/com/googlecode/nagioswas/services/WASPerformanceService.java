@@ -9,6 +9,7 @@ import javax.management.ReflectionException;
 import com.ibm.websphere.management.AdminClient;
 import com.ibm.websphere.management.exception.ConnectorException;
 import com.ibm.websphere.pmi.stat.WSBoundedRangeStatistic;
+import com.ibm.websphere.pmi.stat.WSCountStatistic;
 import com.ibm.websphere.pmi.stat.WSRangeStatistic;
 import com.ibm.websphere.pmi.stat.WSStats;
 import com.ibm.websphere.pmi.stat.WSTimeStatistic;
@@ -39,6 +40,12 @@ public abstract class WASPerformanceService extends WASService {
         WSStats wsStats = lazyLoadStats();
         
         return (WSBoundedRangeStatistic) wsStats.getStatistic (stat);
+    }
+
+    protected WSCountStatistic getCountStats(int stat) throws JMException, ConnectorException {
+        WSStats wsStats = lazyLoadStats();
+        
+        return (WSCountStatistic) wsStats.getStatistic (stat);
     }
     
     protected WSStats lazyLoadStats() throws InstanceNotFoundException,

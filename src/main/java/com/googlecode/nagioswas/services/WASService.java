@@ -19,7 +19,7 @@ public abstract class WASService {
 
     public WASService(AdminClient adminClient, ObjectName mBean) {
         if (mBean == null) {
-            throw new NullPointerException("MBean can not be null");
+            throw new NullPointerException("MBean can not be null, make sure PMI is enabled");
         }
 
         this.adminClient = adminClient;
