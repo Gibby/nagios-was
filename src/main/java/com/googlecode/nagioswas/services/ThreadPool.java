@@ -20,7 +20,12 @@ public class ThreadPool extends WASPerformanceService {
     public static List<ThreadPool> create(AdminClient adminClient, Perf perf) throws ConnectorException, JMException {
         List<ThreadPool> pools = new ArrayList<ThreadPool>();
         
-        Set<ObjectName> mbeans = queryMBeans(adminClient, getMBeanQuery() + ",*");
+        String query = getMBeanQuery() + ",*";
+        Set<ObjectName> mbeans = queryMBeans(adminClient, query);
+        
+        if(mbeans.isEmpty()) {
+        	throw new IllegalArgumentException("No thread pools found using query \"" + query + "\", make sure PMI is enabled");
+        }
         
         for(ObjectName mbean : mbeans) {
             pools.add(new ThreadPool(adminClient, perf, mbean));

@@ -20,7 +20,12 @@ public class SessionManager extends WASPerformanceService {
     public static List<SessionManager> create(AdminClient adminClient, Perf perf) throws ConnectorException, JMException {
         List<SessionManager> pools = new ArrayList<SessionManager>();
         
-        Set<ObjectName> mbeans = queryMBeans(adminClient, getMBeanQuery() + ",*");
+        String query = getMBeanQuery() + ",*";
+        Set<ObjectName> mbeans = queryMBeans(adminClient, query);
+        
+        if(mbeans.isEmpty()) {
+        	throw new IllegalArgumentException("No session managers found using query \"" + query + "\", make sure PMI is enabled");
+        }
         
         for(ObjectName mbean : mbeans) {
             pools.add(new SessionManager(adminClient, perf, mbean));

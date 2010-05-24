@@ -20,7 +20,12 @@ public class JDBCConnectionPool extends WASPerformanceService {
     public static List<JDBCConnectionPool> create(AdminClient adminClient, Perf perf) throws ConnectorException, JMException {
         List<JDBCConnectionPool> pools = new ArrayList<JDBCConnectionPool>();
         
-        Set<ObjectName> mbeans = queryMBeans(adminClient, getMBeanQuery() + ",*");
+        String query = getMBeanQuery() + ",*";
+        Set<ObjectName> mbeans = queryMBeans(adminClient, query);
+        
+        if(mbeans.isEmpty()) {
+        	throw new IllegalArgumentException("No JDBC connection pools found using query \"" + query + "\", make sure PMI is enabled");
+        }
         
         for(ObjectName mbean : mbeans) {
             pools.add(new JDBCConnectionPool(adminClient, perf, mbean));
