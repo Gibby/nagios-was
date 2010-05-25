@@ -1,0 +1,7 @@
+#!/bin/sh
+
+PLUGIN_HOME=/opt/plugins/custom
+JAVA_HOME=/usr/lib/j2sdk1.6-ibm
+WAS_HOME=/opt/was
+
+$JAVA_HOME/bin/java -Dplugin.home="$PLUGIN_HOME" -cp $PLUGIN_HOME/check_was-VERSION.jar:$WAS_HOME/runtimes/com.ibm.ws.admin.client_7.0.0.jar:$WAS_HOME/runtimes/com.ibm.ws.webservices.thinclient_7.0.0.jar:$WAS_HOME/plugins/com.ibm.ws.security.crypto.jar com.googlecode.nagioswas.Run $* 2>/dev/null
